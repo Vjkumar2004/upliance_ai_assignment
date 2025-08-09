@@ -101,15 +101,31 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
   };
 
   return (
-    <Card sx={{ mb: 2, borderLeft: 4, borderLeftColor: 'primary.main' }}>
+    <Card sx={{ 
+      mb: 3, 
+      borderLeft: 4, 
+      borderLeftColor: 'primary.main',
+      borderRadius: 3,
+      boxShadow: 2,
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        boxShadow: 4,
+        transform: 'translateY(-2px)'
+      }
+    }}>
       <CardHeader
         avatar={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <DragIcon sx={{ color: 'text.secondary', cursor: 'grab' }} />
-            <Typography variant="subtitle2" color="text.secondary">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <DragIcon sx={{ color: 'primary.main', cursor: 'grab', fontSize: 20 }} />
+            <Typography variant="subtitle1" color="text.secondary" sx={{ fontWeight: 500 }}>
               {getFieldTypeLabel(field.type)}
             </Typography>
-            <Chip label={field.type} size="small" variant="outlined" />
+            <Chip 
+              label={field.type} 
+              size="small" 
+              variant="outlined"
+              sx={{ borderRadius: 2, fontWeight: 500 }}
+            />
           </Box>
         }
         action={
@@ -118,6 +134,10 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               size="small"
               onClick={() => onMove(field.id, 'up')}
               disabled={index === 0}
+              sx={{ 
+                borderRadius: 2,
+                '&:hover': { bgcolor: 'primary.light', color: 'white' }
+              }}
             >
               <UpIcon />
             </IconButton>
@@ -125,6 +145,10 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               size="small"
               onClick={() => onMove(field.id, 'down')}
               disabled={index === totalFields - 1}
+              sx={{ 
+                borderRadius: 2,
+                '&:hover': { bgcolor: 'primary.light', color: 'white' }
+              }}
             >
               <DownIcon />
             </IconButton>
@@ -132,15 +156,24 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               size="small"
               onClick={() => onDelete(field.id)}
               color="error"
+              sx={{ 
+                borderRadius: 2,
+                '&:hover': { bgcolor: 'error.light', color: 'white' }
+              }}
             >
               <DeleteIcon />
             </IconButton>
           </Box>
         }
-        sx={{ pb: 1 }}
+        sx={{ 
+          pb: 1,
+          '& .MuiCardHeader-content': {
+            minWidth: 0
+          }
+        }}
       />
       
-      <CardContent>
+      <CardContent sx={{ pt: 0, px: 4, pb: 4 }}>
         <Grid container spacing={3}>
           {/* Basic Properties */}
           <Grid item xs={12} md={6}>
@@ -150,7 +183,12 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               value={field.label}
               onChange={(e) => updateField({ label: e.target.value })}
               placeholder="Enter field label"
-              size="small"
+              size="medium"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2
+                }
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -161,7 +199,12 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               onChange={(e) => updateField({ defaultValue: e.target.value })}
               placeholder="Enter default value"
               disabled={field.type === FIELD_TYPES.DERIVED}
-              size="small"
+              size="medium"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2
+                }
+              }}
             />
           </Grid>
 
@@ -172,41 +215,75 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                 <Switch
                   checked={field.required}
                   onChange={(e) => updateField({ required: e.target.checked })}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: 'primary.main'
+                    }
+                  }}
                 />
               }
-              label="Required field"
+              label={
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  Required field
+                </Typography>
+              }
             />
           </Grid>
 
           {/* Field-specific options */}
-          {(field.type === FIELD_TYPES.SELECT || field.type === FIELD_TYPES.RADIO) && (
+          {(field.type === FIELD_TYPES.SELECT || field.type === FIELD_TYPES.RADIO || field.type === FIELD_TYPES.CHECKBOX) && (
             <Grid item xs={12}>
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandIcon />}>
-                  <Typography variant="subtitle2">Options</Typography>
+              <Accordion 
+                sx={{ 
+                  borderRadius: 2,
+                  '&:before': { display: 'none' },
+                  boxShadow: 1
+                }}
+              >
+                <AccordionSummary 
+                  expandIcon={<ExpandIcon />}
+                  sx={{ 
+                    borderRadius: 2,
+                    '&:hover': { bgcolor: 'grey.50' }
+                  }}
+                >
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    Options
+                  </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails sx={{ pt: 2 }}>
                   <Box sx={{ space: 2 }}>
                     {field.options?.map((option, index) => (
-                      <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                      <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
                         <TextField
                           label="Value"
                           value={option.value}
                           onChange={(e) => updateOption(index, 'value', e.target.value)}
                           size="small"
-                          sx={{ flex: 1 }}
+                          sx={{ 
+                            flex: 1,
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2
+                            }
+                          }}
                         />
                         <TextField
                           label="Label"
                           value={option.label}
                           onChange={(e) => updateOption(index, 'label', e.target.value)}
                           size="small"
-                          sx={{ flex: 1 }}
+                          sx={{ 
+                            flex: 1,
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2
+                            }
+                          }}
                         />
                         <IconButton
                           size="small"
                           onClick={() => removeOption(index)}
                           color="error"
+                          sx={{ borderRadius: 2 }}
                         >
                           <CloseIcon />
                         </IconButton>
@@ -216,7 +293,8 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                       startIcon={<AddIcon />}
                       onClick={addOption}
                       variant="outlined"
-                      size="small"
+                      size="medium"
+                      sx={{ borderRadius: 2, mt: 1 }}
                     >
                       Add Option
                     </Button>
@@ -229,14 +307,28 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
           {/* Derived field configuration */}
           {field.type === FIELD_TYPES.DERIVED && (
             <Grid item xs={12}>
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandIcon />}>
-                  <Typography variant="subtitle2">Derived Field Configuration</Typography>
+              <Accordion 
+                sx={{ 
+                  borderRadius: 2,
+                  '&:before': { display: 'none' },
+                  boxShadow: 1
+                }}
+              >
+                <AccordionSummary 
+                  expandIcon={<ExpandIcon />}
+                  sx={{ 
+                    borderRadius: 2,
+                    '&:hover': { bgcolor: 'grey.50' }
+                  }}
+                >
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    Derived Field Configuration
+                  </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails sx={{ pt: 2 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
-                      <FormControl fullWidth size="small">
+                      <FormControl fullWidth size="medium">
                         <InputLabel>Parent Fields</InputLabel>
                         <Select
                           multiple
@@ -247,6 +339,11 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                               : e.target.value 
                           })}
                           label="Parent Fields"
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2
+                            }
+                          }}
                         >
                           {availableParentFields.map((f) => (
                             <MenuItem key={f.id} value={f.id}>
@@ -263,9 +360,14 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                         value={field.formula || ''}
                         onChange={(e) => updateField({ formula: e.target.value })}
                         placeholder="e.g., field1 + field2 * 2"
-                        size="small"
+                        size="medium"
                         multiline
                         rows={2}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2
+                          }
+                        }}
                       />
                     </Grid>
                   </Grid>
@@ -276,34 +378,58 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
 
           {/* Validations */}
           <Grid item xs={12}>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandIcon />}>
-                <Typography variant="subtitle2">Validations</Typography>
+            <Accordion 
+              sx={{ 
+                borderRadius: 2,
+                '&:before': { display: 'none' },
+                boxShadow: 1
+              }}
+            >
+              <AccordionSummary 
+                expandIcon={<ExpandIcon />}
+                sx={{ 
+                  borderRadius: 2,
+                  '&:hover': { bgcolor: 'grey.50' }
+                }}
+              >
+                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                  Validations
+                </Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails sx={{ pt: 2 }}>
                 <Box sx={{ space: 2 }}>
                   {field.validations.map((validation, index) => (
                     <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
-                      <Chip label={validation.type} size="small" />
+                      <Chip 
+                        label={validation.type} 
+                        size="small"
+                        sx={{ borderRadius: 2, fontWeight: 500 }}
+                      />
                       {validation.type !== 'required' && (
                         <TextField
                           label="Value"
                           value={validation.value}
                           onChange={(e) => updateValidation(index, e.target.value)}
                           size="small"
-                          sx={{ flex: 1 }}
+                          sx={{ 
+                            flex: 1,
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2
+                            }
+                          }}
                         />
                       )}
                       <IconButton
                         size="small"
                         onClick={() => removeValidation(index)}
                         color="error"
+                        sx={{ borderRadius: 2 }}
                       >
                         <CloseIcon />
                       </IconButton>
                     </Box>
                   ))}
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
                     {Object.values(VALIDATION_TYPES).map((type) => (
                       <Button
                         key={type}
@@ -311,6 +437,7 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                         variant="outlined"
                         onClick={() => addValidation(type)}
                         disabled={field.validations.some(v => v.type === type)}
+                        sx={{ borderRadius: 2 }}
                       >
                         Add {type}
                       </Button>

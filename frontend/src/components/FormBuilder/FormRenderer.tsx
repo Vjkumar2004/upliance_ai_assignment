@@ -14,7 +14,8 @@ import {
   Typography,
   Alert,
   Button,
-  Paper
+  Paper,
+  FormGroup
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Parser } from 'expr-eval';
@@ -43,8 +44,13 @@ const FormRenderer: React.FC<FormRendererProps> = ({
   useEffect(() => {
     const defaultData: FormValues = {};
     fields.forEach(field => {
-      if (field.defaultValue && !(field.id in formData)) {
-        defaultData[field.id] = field.defaultValue;
+      if (!(field.id in formData)) {
+        if (field.defaultValue) {
+          defaultData[field.id] = field.defaultValue;
+        } else if (field.type === FIELD_TYPES.CHECKBOX && field.options && field.options.length > 0) {
+          // Initialize checkbox fields with options as empty arrays
+          defaultData[field.id] = [];
+        }
       }
     });
     if (Object.keys(defaultData).length > 0) {
@@ -78,8 +84,15 @@ const FormRenderer: React.FC<FormRendererProps> = ({
   }, [formData, fields]);
 
   const validateField = (field: FormField, value: any): string | null => {
-    if (field.required && (!value || value.toString().trim() === '')) {
-      return 'This field is required';
+    if (field.required) {
+      if (field.type === FIELD_TYPES.CHECKBOX && field.options && field.options.length > 0) {
+        // For checkbox fields with options, check if at least one option is selected
+        if (!Array.isArray(value) || value.length === 0) {
+          return 'This field is required';
+        }
+      } else if (!value || value.toString().trim() === '') {
+        return 'This field is required';
+      }
     }
 
     if (!value || value.toString().trim() === '') return null;
@@ -141,8 +154,19 @@ const FormRenderer: React.FC<FormRendererProps> = ({
 
   const renderField = (field: FormField) => {
     const error = errors.find(e => e.fieldId === field.id);
-    const value = formData[field.id] || '';
+    const value = formData[field.id];
     const isTouched = touched.has(field.id);
+
+    const commonFieldProps = {
+      sx: {
+        '& .MuiOutlinedInput-root': {
+          borderRadius: 2,
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'primary.main'
+          }
+        }
+      }
+    };
 
     switch (field.type) {
       case FIELD_TYPES.TEXT:
@@ -153,12 +177,14 @@ const FormRenderer: React.FC<FormRendererProps> = ({
             key={field.id}
             fullWidth
             label={field.label}
-            value={value}
+            value={typeof value === 'string' ? value : ''}
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
             error={isTouched && !!error}
             helperText={isTouched && error ? error.message : ''}
             required={field.required}
             margin="normal"
+            size="medium"
+            {...commonFieldProps}
           />
         );
 
@@ -169,12 +195,14 @@ const FormRenderer: React.FC<FormRendererProps> = ({
             fullWidth
             type="number"
             label={field.label}
-            value={value}
+            value={typeof value === 'string' || typeof value === 'number' ? value : ''}
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
             error={isTouched && !!error}
             helperText={isTouched && error ? error.message : ''}
             required={field.required}
             margin="normal"
+            size="medium"
+            {...commonFieldProps}
           />
         );
 
@@ -186,12 +214,14 @@ const FormRenderer: React.FC<FormRendererProps> = ({
             multiline
             rows={4}
             label={field.label}
-            value={value}
+            value={typeof value === 'string' ? value : ''}
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
             error={isTouched && !!error}
             helperText={isTouched && error ? error.message : ''}
             required={field.required}
             margin="normal"
+            size="medium"
+            {...commonFieldProps}
           />
         );
 
@@ -200,10 +230,17 @@ const FormRenderer: React.FC<FormRendererProps> = ({
           <FormControl key={field.id} fullWidth margin="normal" required={field.required}>
             <InputLabel>{field.label}</InputLabel>
             <Select
-              value={value}
+              value={typeof value === 'string' ? value : ''}
               onChange={(e) => handleFieldChange(field.id, e.target.value)}
               label={field.label}
               error={isTouched && !!error}
+              size="medium"
+              sx={{
+                borderRadius: 2,
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'primary.main'
+                }
+              }}
             >
               {field.options?.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -212,7 +249,7 @@ const FormRenderer: React.FC<FormRendererProps> = ({
               ))}
             </Select>
             {isTouched && error && (
-              <Typography color="error" variant="caption" sx={{ mt: 0.5 }}>
+              <Typography color="error" variant="caption" sx={{ mt: 1, display: 'block' }}>
                 {error.message}
               </Typography>
             )}
@@ -222,22 +259,26 @@ const FormRenderer: React.FC<FormRendererProps> = ({
       case FIELD_TYPES.RADIO:
         return (
           <FormControl key={field.id} component="fieldset" margin="normal" required={field.required}>
-            <FormLabel component="legend">{field.label}</FormLabel>
+            <FormLabel component="legend" sx={{ fontWeight: 600, mb: 1 }}>
+              {field.label}
+            </FormLabel>
             <RadioGroup
-              value={value}
+              value={typeof value === 'string' ? value : ''}
               onChange={(e) => handleFieldChange(field.id, e.target.value)}
+              sx={{ ml: 1 }}
             >
               {field.options?.map((option) => (
                 <FormControlLabel
                   key={option.value}
                   value={option.value}
-                  control={<Radio />}
+                  control={<Radio sx={{ '&.Mui-checked': { color: 'primary.main' } }} />}
                   label={option.label}
+                  sx={{ mb: 1 }}
                 />
               ))}
             </RadioGroup>
             {isTouched && error && (
-              <Typography color="error" variant="caption" sx={{ mt: 0.5 }}>
+              <Typography color="error" variant="caption" sx={{ mt: 1, display: 'block' }}>
                 {error.message}
               </Typography>
             )}
@@ -245,6 +286,74 @@ const FormRenderer: React.FC<FormRendererProps> = ({
         );
 
       case FIELD_TYPES.CHECKBOX:
+        // If checkbox has options, render multiple checkboxes
+        if (field.options && field.options.length > 0) {
+          return (
+            <Box key={field.id} sx={{ mb: 3 }}>
+              <FormLabel 
+                component="legend" 
+                sx={{ 
+                  fontWeight: 600, 
+                  mb: 1,
+                  color: 'text.primary'
+                }}
+              >
+                {field.label}
+                {field.required && <span style={{ color: 'error.main' }}> *</span>}
+              </FormLabel>
+              <FormGroup>
+                {field.options.map((option, index) => (
+                  <FormControlLabel
+                    key={index}
+                    control={
+                      <Checkbox
+                        checked={Array.isArray(value) ? value.includes(option.value) : false}
+                        onChange={(e) => {
+                          const currentValues = Array.isArray(value) ? [...value] : [];
+                          if (e.target.checked) {
+                            if (!currentValues.includes(option.value)) {
+                              handleFieldChange(field.id, [...currentValues, option.value]);
+                            }
+                          } else {
+                            handleFieldChange(field.id, currentValues.filter(v => v !== option.value));
+                          }
+                        }}
+                        sx={{ '&.Mui-checked': { color: 'primary.main' } }}
+                      />
+                    }
+                    label={
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        {option.label || option.value}
+                      </Typography>
+                    }
+                    sx={{ 
+                      mb: 1,
+                      p: 1.5,
+                      borderRadius: 2,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      bgcolor: 'background.paper',
+                      '&:hover': {
+                        bgcolor: 'grey.50'
+                      }
+                    }}
+                  />
+                ))}
+              </FormGroup>
+              {isTouched && error && (
+                <Typography 
+                  variant="caption" 
+                  color="error" 
+                  sx={{ mt: 1, display: 'block' }}
+                >
+                  {error.message}
+                </Typography>
+              )}
+            </Box>
+          );
+        }
+        
+        // Single checkbox (fallback for backward compatibility)
         return (
           <FormControlLabel
             key={field.id}
@@ -252,9 +361,22 @@ const FormRenderer: React.FC<FormRendererProps> = ({
               <Checkbox
                 checked={!!value}
                 onChange={(e) => handleFieldChange(field.id, e.target.checked)}
+                sx={{ '&.Mui-checked': { color: 'primary.main' } }}
               />
             }
-            label={field.label}
+            label={
+              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                {field.label}
+              </Typography>
+            }
+            sx={{ 
+              mb: 2,
+              p: 2,
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper'
+            }}
           />
         );
 
@@ -263,7 +385,7 @@ const FormRenderer: React.FC<FormRendererProps> = ({
           <DatePicker
             key={field.id}
             label={field.label}
-            value={value && typeof value !== 'boolean' ? new Date(value) : null}
+            value={value && typeof value !== 'boolean' && !Array.isArray(value) ? new Date(value) : null}
             onChange={(date) => handleFieldChange(field.id, date)}
             slotProps={{
               textField: {
@@ -271,7 +393,9 @@ const FormRenderer: React.FC<FormRendererProps> = ({
                 margin: "normal",
                 required: field.required,
                 error: isTouched && !!error,
-                helperText: isTouched && error ? error.message : ''
+                helperText: isTouched && error ? error.message : '',
+                size: "medium",
+                ...commonFieldProps
               }
             }}
           />
@@ -283,10 +407,17 @@ const FormRenderer: React.FC<FormRendererProps> = ({
             key={field.id}
             fullWidth
             label={field.label}
-            value={value}
+            value={typeof value === 'string' || typeof value === 'number' ? value : ''}
             InputProps={{ readOnly: true }}
             margin="normal"
+            size="medium"
             helperText={`Calculated from: ${field.formula}`}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+                bgcolor: 'grey.50'
+              }
+            }}
           />
         );
 
@@ -296,38 +427,97 @@ const FormRenderer: React.FC<FormRendererProps> = ({
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 600, mx: 'auto', p: 3 }}>
-      <Paper elevation={2} sx={{ p: 3 }}>
-        <Typography variant="h5" component="h2" gutterBottom>
+    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 800, mx: 'auto' }}>
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          p: 4, 
+          borderRadius: 3,
+          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+          border: '1px solid',
+          borderColor: 'divider'
+        }}
+      >
+        <Typography 
+          variant="h4" 
+          component="h2" 
+          gutterBottom 
+          sx={{ 
+            fontWeight: 'bold',
+            textAlign: 'center',
+            mb: 4,
+            color: 'text.primary'
+          }}
+        >
           Form
         </Typography>
         
         {errors.length > 0 && showValidation && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            Please fix the following errors:
-            <ul>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 3, 
+              borderRadius: 2,
+              '& .MuiAlert-message': {
+                width: '100%'
+              }
+            }}
+          >
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+              Please fix the following errors:
+            </Typography>
+            <ul style={{ margin: 0, paddingLeft: '20px' }}>
               {errors.map((error) => (
-                <li key={error.fieldId}>{error.message}</li>
+                <li key={error.fieldId}>
+                  <Typography variant="body2">
+                    {error.message}
+                  </Typography>
+                </li>
               ))}
             </ul>
           </Alert>
         )}
 
-        {fields.map(renderField)}
+        <Box sx={{ mb: 4 }}>
+          {fields.map((field, index) => (
+            <Box key={field.id} sx={{ mb: 3 }}>
+              {renderField(field)}
+            </Box>
+          ))}
+        </Box>
 
-        <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
-          <Button
+        <Box sx={{ 
+          mt: 4, 
+          display: 'flex', 
+          gap: 2, 
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          {/* <Button
             type="submit"
             variant="contained"
             color="primary"
             size="large"
+            sx={{ 
+              borderRadius: 2, 
+              px: 4, 
+              py: 1.5,
+              fontWeight: 600
+            }}
           >
             Submit
-          </Button>
+          </Button> */}
           <Button
             type="button"
             variant="outlined"
             onClick={() => setFormData({})}
+            size="large"
+            sx={{ 
+              borderRadius: 2, 
+              px: 4, 
+              py: 1.5,
+              fontWeight: 600
+            }}
           >
             Reset
           </Button>

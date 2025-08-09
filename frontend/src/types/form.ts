@@ -37,7 +37,7 @@ export interface FormData {
 
 // New interface for form field values
 export interface FormValues {
-  [key: string]: string | number | boolean | Date;
+  [key: string]: string | number | boolean | Date | string[];
 }
 
 export interface ValidationError {

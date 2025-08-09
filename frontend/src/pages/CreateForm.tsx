@@ -17,7 +17,10 @@ import {
   Fab,
   SpeedDial,
   SpeedDialAction,
-  SpeedDialIcon
+  SpeedDialIcon,
+  Container,
+  Paper,
+  Divider
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -30,7 +33,9 @@ import {
   RadioButtonChecked as RadioIcon,
   CheckBox as CheckboxIcon,
   DateRange as DateIcon,
-  Functions as DerivedIcon
+  Functions as DerivedIcon,
+  Build as BuildIcon,
+  Palette as PaletteIcon
 } from '@mui/icons-material';
 
 import FieldEditor from '../components/FormBuilder/FieldEditor';
@@ -148,128 +153,290 @@ const CreateForm: React.FC = () => {
 
   if (previewMode) {
     return (
-      <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Preview Form
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<PreviewIcon />}
-            onClick={() => setPreviewMode(false)}
+      <Container maxWidth="lg">
+        <Box sx={{ py: 4 }}>
+          {/* Hero Section for Preview */}
+          <Paper
+            elevation={0}
+            sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              p: 4,
+              borderRadius: 4,
+              mb: 4,
+              textAlign: 'center'
+            }}
           >
-            Back to Editor
-          </Button>
+            <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+              Form Preview
+            </Typography>
+            <Typography variant="h6" sx={{ opacity: 0.9 }}>
+              See how your form will look to users
+            </Typography>
+          </Paper>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<BuildIcon />}
+              onClick={() => setPreviewMode(false)}
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                px: 4,
+                py: 1.5,
+                '&:hover': {
+                  bgcolor: 'grey.100'
+                }
+              }}
+            >
+              Back to Editor
+            </Button>
+          </Box>
+
+          <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+            <CardContent sx={{ p: 4 }}>
+              <FormRenderer fields={fields} />
+            </CardContent>
+          </Card>
         </Box>
-        <FormRenderer fields={fields} />
-      </Box>
+      </Container>
     );
   }
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">
-          Create Form
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            variant="outlined"
-            startIcon={<PreviewIcon />}
-            onClick={() => setPreviewMode(true)}
-            disabled={fields.length === 0}
-          >
-            Preview
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<SaveIcon />}
-            onClick={() => setShowSaveDialog(true)}
-            disabled={!formName.trim() || fields.length === 0}
-          >
-            Save Form
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Form Name */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <TextField
-            fullWidth
-            label="Form Name"
-            value={formName}
-            onChange={(e) => setFormName(e.target.value)}
-            placeholder="Enter form name"
-            variant="outlined"
-            size="medium"
-          />
-        </CardContent>
-      </Card>
-
-      {/* Fields */}
-      <Box sx={{ mb: 3 }}>
-        {fields.map((field, index) => (
-          <FieldEditor
-            key={field.id}
-            field={field}
-            onUpdate={updateField}
-            onDelete={deleteField}
-            onMove={moveField}
-            allFields={fields}
-            index={index}
-            totalFields={fields.length}
-          />
-        ))}
-      </Box>
-
-      {/* Add Field Speed Dial */}
-      <SpeedDial
-        ariaLabel="Add field"
-        sx={{ position: 'fixed', bottom: 16, right: 16 }}
-        icon={<SpeedDialIcon />}
-      >
-        {fieldTypeActions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={action.action}
-          />
-        ))}
-      </SpeedDial>
-
-      {/* Save Dialog */}
-      <Dialog open={showSaveDialog} onClose={() => setShowSaveDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Save Form</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to save "{formName}"? This will add it to your saved forms.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowSaveDialog(false)}>Cancel</Button>
-          <Button onClick={handleSaveForm} variant="contained" startIcon={<SaveIcon />}>
-            Save Form
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
+    <Container maxWidth="lg">
+      <Box sx={{ py: 4 }}>
+        {/* Hero Section */}
+        <Paper
+          elevation={0}
+          sx={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            p: 6,
+            borderRadius: 4,
+            mb: 6,
+            textAlign: 'center'
+          }}
         >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+              Create Your Form
+            </Typography>
+            <Typography variant="h5" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
+              Build powerful, interactive forms with our intuitive drag-and-drop builder. 
+              Add fields, validation, and complex logic without writing code.
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<PreviewIcon />}
+              onClick={() => setPreviewMode(true)}
+              disabled={fields.length === 0}
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                px: 4,
+                py: 1.5,
+                '&:hover': {
+                  bgcolor: 'grey.100'
+                }
+              }}
+            >
+              Preview Form
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              startIcon={<SaveIcon />}
+              onClick={() => setShowSaveDialog(true)}
+              disabled={!formName.trim() || fields.length === 0}
+              sx={{
+                borderColor: 'white',
+                color: 'white',
+                px: 4,
+                py: 1.5,
+                '&:hover': {
+                  borderColor: 'white',
+                  bgcolor: 'rgba(255,255,255,0.1)'
+                }
+              }}
+            >
+              Save Form
+            </Button>
+          </Box>
+        </Paper>
+
+        {/* Form Name Section */}
+        <Card sx={{ mb: 4, borderRadius: 3, boxShadow: 2 }}>
+          <CardHeader
+            title="Form Details"
+            subheader="Start by giving your form a name"
+            avatar={<PaletteIcon sx={{ color: 'primary.main' }} />}
+            sx={{ borderBottom: 1, borderColor: 'divider' }}
+          />
+          <CardContent sx={{ p: 4 }}>
+            <TextField
+              fullWidth
+              label="Form Name"
+              value={formName}
+              onChange={(e) => setFormName(e.target.value)}
+              placeholder="Enter a descriptive name for your form"
+              variant="outlined"
+              size="medium"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2
+                }
+              }}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Fields Section */}
+        <Card sx={{ mb: 4, borderRadius: 3, boxShadow: 2 }}>
+          <CardHeader
+            title="Form Fields"
+            subheader={`${fields.length} field${fields.length !== 1 ? 's' : ''} added`}
+            avatar={<BuildIcon sx={{ color: 'secondary.main' }} />}
+            sx={{ borderBottom: 1, borderColor: 'divider' }}
+          />
+          <CardContent sx={{ p: 4 }}>
+            {fields.length === 0 ? (
+              <Box sx={{ textAlign: 'center', py: 6 }}>
+                <Typography variant="h6" color="text.secondary" gutterBottom>
+                  No Fields Yet
+                </Typography>
+                <Typography color="text.secondary" sx={{ mb: 3 }}>
+                  Use the floating action button to add your first field
+                </Typography>
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  gap: 2, 
+                  flexWrap: 'wrap' 
+                }}>
+                  {fieldTypeActions.slice(0, 4).map((action) => (
+                    <Button
+                      key={action.name}
+                      variant="outlined"
+                      startIcon={action.icon}
+                      onClick={action.action}
+                      sx={{ borderRadius: 2 }}
+                    >
+                      {action.name}
+                    </Button>
+                  ))}
+                </Box>
+              </Box>
+            ) : (
+              <Box>
+                {fields.map((field, index) => (
+                  <Box key={field.id}>
+                    <FieldEditor
+                      field={field}
+                      onUpdate={updateField}
+                      onDelete={deleteField}
+                      onMove={moveField}
+                      allFields={fields}
+                      index={index}
+                      totalFields={fields.length}
+                    />
+                    {index < fields.length - 1 && (
+                      <Divider sx={{ my: 2, opacity: 0.3 }} />
+                    )}
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Add Field Speed Dial */}
+        <SpeedDial
+          ariaLabel="Add field"
+          sx={{ 
+            position: 'fixed', 
+            bottom: 24, 
+            right: 24,
+            '& .MuiFab-primary': {
+              bgcolor: 'primary.main',
+              '&:hover': {
+                bgcolor: 'primary.dark'
+              }
+            }
+          }}
+          icon={<SpeedDialIcon />}
+        >
+          {fieldTypeActions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              onClick={action.action}
+            />
+          ))}
+        </SpeedDial>
+
+        {/* Save Dialog */}
+        <Dialog 
+          open={showSaveDialog} 
+          onClose={() => setShowSaveDialog(false)} 
+          maxWidth="sm" 
+          fullWidth
+          PaperProps={{
+            sx: { borderRadius: 3 }
+          }}
+        >
+          <DialogTitle sx={{ pb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <SaveIcon sx={{ color: 'primary.main' }} />
+              Save Form
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            <Typography>
+              Are you sure you want to save "{formName}"? This will add it to your saved forms.
+            </Typography>
+          </DialogContent>
+          <DialogActions sx={{ p: 3, pt: 1 }}>
+            <Button 
+              onClick={() => setShowSaveDialog(false)}
+              sx={{ borderRadius: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSaveForm} 
+              variant="contained" 
+              startIcon={<SaveIcon />}
+              sx={{ borderRadius: 2 }}
+            >
+              Save Form
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Snackbar */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        >
+          <Alert
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+            severity={snackbar.severity}
+            sx={{ width: '100%', borderRadius: 2 }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      </Box>
+    </Container>
   );
 };
 

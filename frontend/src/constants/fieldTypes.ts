@@ -35,6 +35,7 @@ export const getFieldDefaults = (type: FieldType): FormField => {
   switch (type) {
     case FIELD_TYPES.SELECT:
     case FIELD_TYPES.RADIO:
+    case FIELD_TYPES.CHECKBOX:
       return {
         ...baseDefaults,
         options: [{ value: '', label: '' }]

@@ -49,12 +49,21 @@ const Navigation: React.FC = () => {
 
   const drawer = (
     <Box sx={{ width: 250 }} role="presentation">
-      <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography variant="h6" color="primary">
+      <Box sx={{ 
+        p: 3, 
+        borderBottom: 1, 
+        borderColor: 'divider',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white'
+      }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           Form Builder
         </Typography>
+        <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
+          Dynamic & Interactive
+        </Typography>
       </Box>
-      <List>
+      <List sx={{ pt: 2 }}>
         {menuItems.map((item) => (
           <ListItem
             button
@@ -62,21 +71,35 @@ const Navigation: React.FC = () => {
             onClick={() => handleNavigation(item.path)}
             selected={location.pathname === item.path}
             sx={{
+              mx: 1,
+              mb: 0.5,
+              borderRadius: 2,
               '&.Mui-selected': {
-                backgroundColor: 'primary.light',
+                backgroundColor: 'primary.main',
+                color: 'white',
                 '&:hover': {
-                  backgroundColor: 'primary.light',
+                  backgroundColor: 'primary.dark',
                 },
+                '& .MuiListItemIcon-root': {
+                  color: 'white',
+                },
+              },
+              '&:hover': {
+                backgroundColor: 'grey.100',
+                borderRadius: 2,
               },
             }}
           >
-            <ListItemIcon sx={{ color: location.pathname === item.path ? 'primary.main' : 'inherit' }}>
+            <ListItemIcon sx={{ 
+              color: location.pathname === item.path ? 'white' : 'primary.main',
+              minWidth: 40
+            }}>
               {item.icon}
             </ListItemIcon>
             <ListItemText 
               primary={item.text} 
               sx={{ 
-                color: location.pathname === item.path ? 'primary.main' : 'inherit',
+                color: location.pathname === item.path ? 'white' : 'inherit',
                 fontWeight: location.pathname === item.path ? 'bold' : 'normal'
               }}
             />
@@ -88,18 +111,40 @@ const Navigation: React.FC = () => {
 
   return (
     <>
-      <AppBar position="sticky" elevation={1}>
-        <Toolbar>
+      <AppBar 
+        position="sticky" 
+        elevation={0}
+        sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderBottom: '1px solid',
+          borderColor: 'rgba(255,255,255,0.1)'
+        }}
+      >
+        <Toolbar sx={{ px: { xs: 2, md: 3 } }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
+            sx={{ 
+              mr: 2, 
+              display: { md: 'none' },
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.1)'
+              }
+            }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography 
+            variant="h5" 
+            component="div" 
+            sx={{ 
+              flexGrow: 1, 
+              fontWeight: 'bold',
+              textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+            }}
+          >
             Dynamic Form Builder
           </Typography>
         </Toolbar>
@@ -121,6 +166,9 @@ const Navigation: React.FC = () => {
               top: ['48px', '56px', '64px'],
               height: 'auto',
               bottom: 0,
+              borderRight: '1px solid',
+              borderColor: 'divider',
+              boxShadow: 2
             },
           }}
         >

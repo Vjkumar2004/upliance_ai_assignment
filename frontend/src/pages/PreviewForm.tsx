@@ -7,11 +7,14 @@ import {
   CardContent,
   Alert,
   Snackbar,
-  Paper
+  Paper,
+  Container
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
-  CheckCircle as SuccessIcon
+  CheckCircle as SuccessIcon,
+  Visibility as PreviewIcon,
+  Build as BuildIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -52,81 +55,151 @@ const PreviewForm: React.FC = () => {
 
   if (!form || !form.fields || form.fields.length === 0) {
     return (
-      <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Preview Form
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<BackIcon />}
-            onClick={() => navigate('/create')}
+      <Container maxWidth="lg">
+        <Box sx={{ py: 4 }}>
+          {/* Hero Section */}
+          <Paper
+            elevation={0}
+            sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              p: 6,
+              borderRadius: 4,
+              mb: 6,
+              textAlign: 'center'
+            }}
           >
-            Back to Create
-          </Button>
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                Form Preview
+              </Typography>
+              <Typography variant="h5" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
+                See how your form will look to users before publishing. 
+                Test the user experience and validation.
+              </Typography>
+            </Box>
+
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<BuildIcon />}
+              onClick={() => navigate('/create')}
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                px: 4,
+                py: 1.5,
+                '&:hover': {
+                  bgcolor: 'grey.100'
+                }
+              }}
+            >
+              Create Form
+            </Button>
+          </Paper>
+          
+          {/* Empty State */}
+          <Card sx={{ borderRadius: 3, boxShadow: 2, textAlign: 'center' }}>
+            <CardContent sx={{ p: 8 }}>
+              <PreviewIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 3, opacity: 0.5 }} />
+              <Typography variant="h4" color="text.secondary" gutterBottom>
+                No Form to Preview
+              </Typography>
+              <Typography variant="h6" color="text.secondary" sx={{ mb: 4, maxWidth: 500, mx: 'auto' }}>
+                Please create a form first to preview it here. You can build forms with various field types and validation rules.
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<BuildIcon />}
+                onClick={() => navigate('/create')}
+                sx={{ borderRadius: 2, px: 4, py: 1.5 }}
+              >
+                Create Form
+              </Button>
+            </CardContent>
+          </Card>
         </Box>
-        
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            No Form to Preview
-          </Typography>
-          <Typography color="text.secondary" sx={{ mb: 3 }}>
-            Please create a form first to preview it here.
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={() => navigate('/create')}
-          >
-            Create Form
-          </Button>
-        </Paper>
-      </Box>
+      </Container>
     );
   }
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Preview Form
-          </Typography>
-          {form.name && (
-            <Typography variant="h6" color="text.secondary">
-              {form.name}
+    <Container maxWidth="lg">
+      <Box sx={{ py: 4 }}>
+        {/* Hero Section */}
+        <Paper
+          elevation={0}
+          sx={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            p: 6,
+            borderRadius: 4,
+            mb: 6,
+            textAlign: 'center'
+          }}
+        >
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+              Form Preview
             </Typography>
-          )}
-        </Box>
-        <Button
-          variant="outlined"
-          startIcon={<BackIcon />}
-          onClick={() => navigate('/create')}
-        >
-          Back to Create
-        </Button>
-      </Box>
+            {form.name && (
+              <Typography variant="h4" sx={{ opacity: 0.9, mb: 2 }}>
+                {form.name}
+              </Typography>
+            )}
+            <Typography variant="h6" sx={{ opacity: 0.8, maxWidth: 600, mx: 'auto' }}>
+              See how your form will look to users. Test the user experience and validation rules.
+            </Typography>
+          </Box>
 
-      <FormRenderer
-        fields={form.fields}
-        onSubmit={handleFormSubmit}
-        showValidation={true}
-      />
+          <Button
+            variant="outlined"
+            size="large"
+            startIcon={<BackIcon />}
+            onClick={() => navigate('/create')}
+            sx={{
+              borderColor: 'white',
+              color: 'white',
+              px: 4,
+              py: 1.5,
+              '&:hover': {
+                borderColor: 'white',
+                bgcolor: 'rgba(255,255,255,0.1)'
+              }
+            }}
+          >
+            Back to Editor
+          </Button>
+        </Paper>
 
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert
+        {/* Form Preview */}
+        <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+          <CardContent sx={{ p: 4 }}>
+            <FormRenderer
+              fields={form.fields}
+              onSubmit={handleFormSubmit}
+              showValidation={true}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Snackbar */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
           onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
         >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Alert
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+            severity={snackbar.severity}
+            sx={{ width: '100%', borderRadius: 2 }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      </Box>
+    </Container>
   );
 };
 

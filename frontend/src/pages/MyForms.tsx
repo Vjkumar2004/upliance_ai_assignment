@@ -20,14 +20,18 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
+  Container,
+  Divider
 } from '@mui/material';
 import {
   Visibility as ViewIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Add as AddIcon,
-  CalendarToday as CalendarIcon
+  CalendarToday as CalendarIcon,
+  Folder as FolderIcon,
+  Description as FormIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -122,183 +126,289 @@ const MyForms: React.FC = () => {
 
   if (forms.length === 0) {
     return (
-      <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            My Forms
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => navigate('/create')}
+      <Container maxWidth="lg">
+        <Box sx={{ py: 4 }}>
+          {/* Hero Section */}
+          <Paper
+            elevation={0}
+            sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              p: 6,
+              borderRadius: 4,
+              mb: 6,
+              textAlign: 'center'
+            }}
           >
-            Create New Form
-          </Button>
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                My Forms
+              </Typography>
+              <Typography variant="h5" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
+                Manage and organize all your created forms in one place. 
+                View, edit, and share your forms with ease.
+              </Typography>
+            </Box>
+
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<AddIcon />}
+              onClick={() => navigate('/create')}
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                px: 4,
+                py: 1.5,
+                '&:hover': {
+                  bgcolor: 'grey.100'
+                }
+              }}
+            >
+              Create Your First Form
+            </Button>
+          </Paper>
+          
+          {/* Empty State */}
+          <Card sx={{ borderRadius: 3, boxShadow: 2, textAlign: 'center' }}>
+            <CardContent sx={{ p: 8 }}>
+              <FolderIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 3, opacity: 0.5 }} />
+              <Typography variant="h4" color="text.secondary" gutterBottom>
+                No Forms Yet
+              </Typography>
+              <Typography variant="h6" color="text.secondary" sx={{ mb: 4, maxWidth: 500, mx: 'auto' }}>
+                You haven't created any forms yet. Start building your first form to get started!
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<AddIcon />}
+                onClick={() => navigate('/create')}
+                sx={{ borderRadius: 2, px: 4, py: 1.5 }}
+              >
+                Create Your First Form
+              </Button>
+            </CardContent>
+          </Card>
         </Box>
-        
-        <Paper sx={{ p: 6, textAlign: 'center' }}>
-          <Typography variant="h5" color="text.secondary" gutterBottom>
-            No Forms Yet
-          </Typography>
-          <Typography color="text.secondary" sx={{ mb: 4 }}>
-            You haven't created any forms yet. Start building your first form!
-          </Typography>
+      </Container>
+    );
+  }
+
+  return (
+    <Container maxWidth="lg">
+      <Box sx={{ py: 4 }}>
+        {/* Hero Section */}
+        <Paper
+          elevation={0}
+          sx={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            p: 6,
+            borderRadius: 4,
+            mb: 6,
+            textAlign: 'center'
+          }}
+        >
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+              My Forms
+            </Typography>
+            <Typography variant="h5" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
+              Manage and organize all your created forms in one place. 
+              View, edit, and share your forms with ease.
+            </Typography>
+          </Box>
+
           <Button
             variant="contained"
             size="large"
             startIcon={<AddIcon />}
             onClick={() => navigate('/create')}
+            sx={{
+              bgcolor: 'white',
+              color: 'primary.main',
+              px: 4,
+              py: 1.5,
+              '&:hover': {
+                bgcolor: 'grey.100'
+              }
+            }}
           >
-            Create Your First Form
+            Create New Form
           </Button>
         </Paper>
-      </Box>
-    );
-  }
 
-  return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">
-          My Forms
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => navigate('/create')}
-        >
-          Create New Form
-        </Button>
-      </Box>
+        {/* Forms Grid */}
+        <Grid container spacing={4}>
+          {forms.map((form) => (
+            <Grid item xs={12} md={6} lg={4} key={form.id}>
+              <Card sx={{ 
+                height: '100%', 
+                display: 'flex', 
+                flexDirection: 'column',
+                borderRadius: 3,
+                boxShadow: 2,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 4
+                }
+              }}>
+                <CardContent sx={{ flexGrow: 1, p: 4 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <FormIcon sx={{ color: 'primary.main', fontSize: 20 }} />
+                      <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>
+                        {form.name}
+                      </Typography>
+                    </Box>
+                    <Chip 
+                      label={`${form.fields.length} field${form.fields.length !== 1 ? 's' : ''}`} 
+                      size="small" 
+                      variant="outlined"
+                      sx={{ borderRadius: 2 }}
+                    />
+                  </Box>
+                  
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                    <CalendarIcon sx={{ fontSize: 18, mr: 1.5, color: 'text.secondary' }} />
+                    <Typography variant="body2" color="text.secondary">
+                      Created {formatDate(form.createdAt || new Date())}
+                    </Typography>
+                  </Box>
 
-      <Grid container spacing={3}>
-        {forms.map((form) => (
-          <Grid item xs={12} md={6} lg={4} key={form.id}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                  <Typography variant="h6" component="h3" gutterBottom>
-                    {form.name}
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
+                    {form.fields.length > 0 
+                      ? `Contains ${form.fields.length} field${form.fields.length === 1 ? '' : 's'} with various input types and validation rules.`
+                      : 'No fields defined yet.'
+                    }
                   </Typography>
-                  <Chip 
-                    label={`${form.fields.length} fields`} 
-                    size="small" 
-                    variant="outlined" 
-                  />
-                </Box>
+                </CardContent>
                 
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <CalendarIcon sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-                  <Typography variant="body2" color="text.secondary">
-                    Created {formatDate(form.createdAt || new Date())}
-                  </Typography>
-                </Box>
+                <Divider sx={{ opacity: 0.3 }} />
+                <CardActions sx={{ p: 3, pt: 2 }}>
+                  <Button
+                    size="medium"
+                    startIcon={<ViewIcon />}
+                    onClick={() => handleViewForm(form)}
+                    sx={{ borderRadius: 2, flex: 1 }}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    size="medium"
+                    startIcon={<EditIcon />}
+                    onClick={() => handleEditForm(form)}
+                    sx={{ borderRadius: 2, flex: 1 }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="medium"
+                    color="error"
+                    startIcon={<DeleteIcon />}
+                    onClick={() => handleDeleteForm(form)}
+                    sx={{ borderRadius: 2, flex: 1 }}
+                  >
+                    Delete
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
 
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  {form.fields.length > 0 
-                    ? `Contains ${form.fields.length} field${form.fields.length === 1 ? '' : 's'}`
-                    : 'No fields defined'
-                  }
-                </Typography>
-              </CardContent>
-              
-              <CardActions sx={{ pt: 0 }}>
-                <Button
-                  size="small"
-                  startIcon={<ViewIcon />}
-                  onClick={() => handleViewForm(form)}
-                >
-                  View
-                </Button>
-                <Button
-                  size="small"
-                  startIcon={<EditIcon />}
-                  onClick={() => handleEditForm(form)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  size="small"
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  onClick={() => handleDeleteForm(form)}
-                >
-                  Delete
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Preview Dialog */}
-      <Dialog
-        open={showPreviewDialog}
-        onClose={() => setShowPreviewDialog(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          {selectedForm?.name} - Preview
-        </DialogTitle>
-        <DialogContent>
-          {selectedForm && (
-            <FormRenderer
-              fields={selectedForm.fields}
-              onSubmit={handleFormSubmit}
-              showValidation={true}
-            />
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowPreviewDialog(false)}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Delete Form</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete "{formToDelete?.name}"? This action cannot be undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowDeleteDialog(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={confirmDelete} 
-            color="error" 
-            variant="contained"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
+        {/* Preview Dialog */}
+        <Dialog
+          open={showPreviewDialog}
+          onClose={() => setShowPreviewDialog(false)}
+          maxWidth="md"
+          fullWidth
+          PaperProps={{
+            sx: { borderRadius: 3 }
+          }}
         >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <DialogTitle sx={{ pb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <ViewIcon sx={{ color: 'primary.main' }} />
+              {selectedForm?.name} - Preview
+            </Box>
+          </DialogTitle>
+          <DialogContent sx={{ p: 3 }}>
+            {selectedForm && (
+              <FormRenderer
+                fields={selectedForm.fields}
+                onSubmit={handleFormSubmit}
+                showValidation={true}
+              />
+            )}
+          </DialogContent>
+          <DialogActions sx={{ p: 3, pt: 1 }}>
+            <Button 
+              onClick={() => setShowPreviewDialog(false)}
+              sx={{ borderRadius: 2 }}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog
+          open={showDeleteDialog}
+          onClose={() => setShowDeleteDialog(false)}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: { borderRadius: 3 }
+          }}
+        >
+          <DialogTitle sx={{ pb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <DeleteIcon sx={{ color: 'error.main' }} />
+              Delete Form
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            <Typography>
+              Are you sure you want to delete "{formToDelete?.name}"? This action cannot be undone.
+            </Typography>
+          </DialogContent>
+          <DialogActions sx={{ p: 3, pt: 1 }}>
+            <Button 
+              onClick={() => setShowDeleteDialog(false)}
+              sx={{ borderRadius: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmDelete} 
+              color="error" 
+              variant="contained"
+              sx={{ borderRadius: 2 }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Snackbar */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        >
+          <Alert
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+            severity={snackbar.severity}
+            sx={{ width: '100%', borderRadius: 2 }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      </Box>
+    </Container>
   );
 };
 

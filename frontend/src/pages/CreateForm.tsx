@@ -224,10 +224,6 @@ const CreateForm: React.FC = () => {
             <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
               Create Your Form
             </Typography>
-            <Typography variant="h5" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
-              Build powerful, interactive forms with our intuitive drag-and-drop builder. 
-              Add fields, validation, and complex logic without writing code.
-            </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>

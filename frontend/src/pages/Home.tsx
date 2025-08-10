@@ -57,10 +57,7 @@ const Home: React.FC = () => {
             <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
               Dynamic Form Builder
             </Typography>
-            <Typography variant="h5" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
-              Create powerful, interactive forms with drag-and-drop simplicity. 
-              Add validation, derived fields, and complex logic without writing code.
-            </Typography>
+          
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>

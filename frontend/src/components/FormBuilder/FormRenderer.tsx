@@ -39,6 +39,8 @@ const FormRenderer: React.FC<FormRendererProps> = ({
   const [formData, setFormData] = useState<FormValues>(initialData);
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [touched, setTouched] = useState<Set<string>>(new Set());
+  const [showValidationSummary, setShowValidationSummary] = useState(false);
+  const [validationResults, setValidationResults] = useState<{ fieldId: string; label: string; isValid: boolean; message?: string }[]>([]);
 
   // Initialize form data with default values
   useEffect(() => {
@@ -138,17 +140,39 @@ const FormRenderer: React.FC<FormRendererProps> = ({
     
     // Validate all fields
     const newErrors: ValidationError[] = [];
+    const newValidationResults: { fieldId: string; label: string; isValid: boolean; message?: string }[] = [];
+    
     fields.forEach(field => {
       const error = validateField(field, formData[field.id]);
+      const isValid = !error;
+      
+      newValidationResults.push({
+        fieldId: field.id,
+        label: field.label,
+        isValid,
+        message: error || 'Valid'
+      });
+      
       if (error) {
         newErrors.push({ fieldId: field.id, message: error });
       }
     });
     
     setErrors(newErrors);
+    setValidationResults(newValidationResults);
+    setShowValidationSummary(true);
     
-    if (newErrors.length === 0 && onSubmit) {
-      onSubmit(formData);
+    // Show comprehensive validation results
+    if (newErrors.length === 0) {
+      // All validations passed
+      if (onSubmit) {
+        onSubmit(formData);
+      }
+    } else {
+      // Show detailed validation report
+      console.log('Validation Report:', newValidationResults);
+      console.log('Form Data:', formData);
+      console.log('Errors:', newErrors);
     }
   };
 
@@ -478,6 +502,75 @@ const FormRenderer: React.FC<FormRendererProps> = ({
           </Alert>
         )}
 
+        {showValidationSummary && (
+          <Paper 
+            elevation={2} 
+            sx={{ 
+              mb: 3, 
+              p: 3, 
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: errors.length > 0 ? 'error.main' : 'success.main',
+              bgcolor: errors.length > 0 ? 'error.light' : 'success.light'
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: errors.length > 0 ? 'error.dark' : 'success.dark' }}>
+              {errors.length > 0 ? '❌ Validation Failed' : '✅ All Requirements Met!'}
+            </Typography>
+            
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+                Validation Summary:
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {validationResults.filter(r => r.isValid).length} of {validationResults.length} fields are valid
+              </Typography>
+            </Box>
+
+            <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
+              {validationResults.map((result) => (
+                <Box 
+                  key={result.fieldId} 
+                  sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    mb: 1,
+                    p: 1,
+                    borderRadius: 1,
+                    bgcolor: 'background.paper'
+                  }}
+                >
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      fontWeight: 500,
+                      color: result.isValid ? 'success.main' : 'error.main',
+                      flex: 1
+                    }}
+                  >
+                    {result.isValid ? '✅' : '❌'} {result.label}
+                  </Typography>
+                  <Typography 
+                    variant="caption" 
+                    color={result.isValid ? 'success.main' : 'error.main'}
+                  >
+                    {result.message}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => setShowValidationSummary(false)}
+              sx={{ mt: 2 }}
+            >
+              Hide Summary
+            </Button>
+          </Paper>
+        )}
+
         <Box sx={{ mb: 4 }}>
           {fields.map((field, index) => (
             <Box key={field.id} sx={{ mb: 3 }}>
@@ -493,7 +586,7 @@ const FormRenderer: React.FC<FormRendererProps> = ({
           justifyContent: 'center',
           flexWrap: 'wrap'
         }}>
-          {/* <Button
+          <Button
             type="submit"
             variant="contained"
             color="primary"
@@ -502,11 +595,12 @@ const FormRenderer: React.FC<FormRendererProps> = ({
               borderRadius: 2, 
               px: 4, 
               py: 1.5,
-              fontWeight: 600
+              fontWeight: 600,
+              minWidth: 120
             }}
           >
-            Submit
-          </Button> */}
+            Submit & Test
+          </Button>
           <Button
             type="button"
             variant="outlined"

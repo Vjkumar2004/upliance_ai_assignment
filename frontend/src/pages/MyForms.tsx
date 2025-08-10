@@ -31,7 +31,8 @@ import {
   Add as AddIcon,
   CalendarToday as CalendarIcon,
   Folder as FolderIcon,
-  Description as FormIcon
+  Description as FormIcon,
+  ArrowBack as BackIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -128,6 +129,30 @@ const MyForms: React.FC = () => {
     return (
       <Container maxWidth="lg">
         <Box sx={{ py: 4 }}>
+          {/* Back Button - Top Left */}
+          <Box sx={{ mb: 3 }}>
+            <Button
+              variant="outlined"
+              size="medium"
+              startIcon={<BackIcon />}
+              onClick={() => navigate('/')}
+              sx={{
+                borderRadius: 2,
+                px: 3,
+                py: 1,
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                '&:hover': {
+                  borderColor: 'primary.dark',
+                  bgcolor: 'primary.light',
+                  color: 'primary.dark'
+                }
+              }}
+            >
+              Back to Home
+            </Button>
+          </Box>
+
           {/* Hero Section */}
           <Paper
             elevation={0}
@@ -198,6 +223,30 @@ const MyForms: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
+        {/* Back Button - Top Left */}
+        <Box sx={{ mb: 3 }}>
+          <Button
+            variant="outlined"
+            size="medium"
+            startIcon={<BackIcon />}
+            onClick={() => navigate('/')}
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              '&:hover': {
+                borderColor: 'primary.dark',
+                bgcolor: 'primary.light',
+                color: 'primary.dark'
+              }
+            }}
+          >
+            Back to Home
+          </Button>
+        </Box>
+
         {/* Hero Section */}
         <Paper
           elevation={0}

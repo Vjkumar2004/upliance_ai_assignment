@@ -35,8 +35,10 @@ import {
   DateRange as DateIcon,
   Functions as DerivedIcon,
   Build as BuildIcon,
-  Palette as PaletteIcon
+  Palette as PaletteIcon,
+  ArrowBack as BackIcon
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 import FieldEditor from '../components/FormBuilder/FieldEditor';
 import FormRenderer from '../components/FormBuilder/FormRenderer';
@@ -45,6 +47,7 @@ import { getCurrentFormFromStorage, saveCurrentFormToStorage, saveFormToStorage 
 import { FormSchema, FormField } from '../types/form';
 
 const CreateForm: React.FC = () => {
+  const navigate = useNavigate();
   const [formName, setFormName] = useState<string>('');
   const [fields, setFields] = useState<FormField[]>([]);
   const [previewMode, setPreviewMode] = useState<boolean>(false);
@@ -155,6 +158,30 @@ const CreateForm: React.FC = () => {
     return (
       <Container maxWidth="lg">
         <Box sx={{ py: 4 }}>
+          {/* Back Button - Top Left */}
+          <Box sx={{ mb: 3 }}>
+            <Button
+              variant="outlined"
+              size="medium"
+              startIcon={<BackIcon />}
+              onClick={() => navigate('/')}
+              sx={{
+                borderRadius: 2,
+                px: 3,
+                py: 1,
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                '&:hover': {
+                  borderColor: 'primary.dark',
+                  bgcolor: 'primary.light',
+                  color: 'primary.dark'
+                }
+              }}
+            >
+              Back to Home
+            </Button>
+          </Box>
+
           {/* Hero Section for Preview */}
           <Paper
             elevation={0}
@@ -208,6 +235,30 @@ const CreateForm: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
+        {/* Back Button - Top Left */}
+        <Box sx={{ mb: 3 }}>
+          <Button
+            variant="outlined"
+            size="medium"
+            startIcon={<BackIcon />}
+            onClick={() => navigate('/')}
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              '&:hover': {
+                borderColor: 'primary.dark',
+                bgcolor: 'primary.light',
+                color: 'primary.dark'
+              }
+            }}
+          >
+            Back to Home
+          </Button>
+        </Box>
+
         {/* Hero Section */}
         <Paper
           elevation={0}

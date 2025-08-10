@@ -46,9 +46,25 @@ const PreviewForm: React.FC = () => {
 
   const handleFormSubmit = (data: FormValues) => {
     console.log('Form submitted with data:', data);
+    
+    // Comprehensive validation report
+    const validationReport = {
+      totalFields: form?.fields?.length || 0,
+      filledFields: Object.keys(data).filter(key => {
+        const value = data[key];
+        return value !== undefined && value !== null && value !== '' && 
+               (Array.isArray(value) ? value.length > 0 : true);
+      }).length,
+      validationStatus: 'All requirements met!',
+      formData: data,
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log('Validation Report:', validationReport);
+    
     setSnackbar({
       open: true,
-      message: 'Form submitted successfully!',
+      message: `✅ Form submitted successfully! ${validationReport.filledFields}/${validationReport.totalFields} fields completed.`,
       severity: 'success'
     });
   };
@@ -127,6 +143,30 @@ const PreviewForm: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
+        {/* Back Button - Top Left */}
+        <Box sx={{ mb: 3 }}>
+          <Button
+            variant="outlined"
+            size="medium"
+            startIcon={<BackIcon />}
+            onClick={() => navigate('/')}
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              '&:hover': {
+                borderColor: 'primary.dark',
+                bgcolor: 'primary.light',
+                color: 'primary.dark'
+              }
+            }}
+          >
+            Back to Home
+          </Button>
+        </Box>
+
         {/* Hero Section */}
         <Paper
           elevation={0}
